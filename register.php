@@ -13,14 +13,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (strlen($password) < 6) {
         $error = 'Password must be at least 6 characters.';
     } else {
+        // Check if username already exists
         $stmt = $pdo->prepare('SELECT id FROM users WHERE username = ?');
         $stmt->execute([$username]);
         if ($stmt->fetch()) {
             $error = 'Username already taken.';
         } else {
             $hash = password_hash($password, PASSWORD_DEFAULT);
+            
             $stmt = $pdo->prepare('INSERT INTO users (username, password_hash) VALUES (?, ?)');
             $stmt->execute([$username, $hash]);
+            
             // Redirect to login with success message
             header('Location: login.php?registered=1');
             exit();

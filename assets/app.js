@@ -2,6 +2,44 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!document.getElementById('lists-nav')) return; // only run on dashboard
 
     let currentListId = null;
+    let currentListType = 'todo';
+
+    // Show Add List Modal
+    document.getElementById('add-list-btn').onclick = function() {
+        document.getElementById('add-list-modal').style.display = 'flex';
+        document.getElementById('list-title').focus();
+    };
+
+    // Hide Add List Modal
+    document.getElementById('cancel-add-list').onclick = function() {
+        document.getElementById('add-list-modal').style.display = 'none';
+        document.getElementById('new-list-form').reset();
+    };
+
+    // Add New List
+    document.getElementById('new-list-form').onsubmit = function(e) {
+        e.preventDefault();
+        const title = document.getElementById('list-title').value.trim();
+        const type = document.getElementById('list-type').value;
+        const description = document.getElementById('list-description').value.trim();
+        
+        if (!title) return;
+        
+        fetch('api/lists.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: new URLSearchParams({action: 'add', title, type, description}),
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('add-list-modal').style.display = 'none';
+                    document.getElementById('new-list-form').reset();
+                    loadLists(data.id);
+                    guiToast('List created!');
+                }
+            });
+    };
 
     // Load all lists and select the first one
     function loadLists(selectId = null) {
@@ -24,79 +62,135 @@ document.addEventListener('DOMContentLoaded', function() {
                     data.lists.forEach((list, idx) => {
                         const wrap = document.createElement('div');
                         wrap.className = 'list-link-wrap' + ((selectId ? list.id === selectId : idx === 0) ? ' active' : '');
-                        // List link
+                        
+                        // List link with type icon
                         const a = document.createElement('a');
                         a.className = 'list-link' + ((selectId ? list.id === selectId : idx === 0) ? ' active' : '');
-                        a.textContent = list.title;
+                        const typeIcon = list.type === 'note' ? '📝' : '📋';
+                        const sharedIcon = list.is_shared ? ' 🤝' : '';
+                        a.innerHTML = `${typeIcon} ${escapeHtml(list.title)}${sharedIcon}`;
                         a.href = '#';
                         a.dataset.id = list.id;
+                        a.dataset.type = list.type || 'todo';
                         a.onclick = function(e) {
                             e.preventDefault();
                             document.querySelectorAll('.list-link').forEach(l => l.classList.remove('active'));
+                            document.querySelectorAll('.list-link-wrap').forEach(l => l.classList.remove('active'));
                             this.classList.add('active');
-                            loadItems(list.id, list.title);
+                            wrap.classList.add('active');
+                            loadItems(list.id, list.title, list.type || 'todo', list.is_shared);
                             currentListId = list.id;
+                            currentListType = list.type || 'todo';
                         };
                         wrap.appendChild(a);
-                        // Delete button
-                        const btn = document.createElement('button');
-                        btn.className = 'delete-list-btn';
-                        btn.textContent = '🗑️';
-                        btn.title = 'Delete List';
-                        btn.dataset.id = list.id;
-                        btn.onclick = function(e) {
-                            e.stopPropagation();
-                            guiConfirm('Delete this list and all its tasks?').then(confirmed => {
-                                if (confirmed) {
-                                    fetch('api/lists.php', {
-                                        method: 'POST',
-                                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                                        body: new URLSearchParams({action: 'delete', id: list.id}),
-                                    })
-                                        .then(r => r.json())
-                                        .then(data => {
-                                            if (data.success) {
-                                                loadLists();
-                                                guiToast('List deleted!');
-                                            }
-                                        });
-                                }
-                            });
-                        };
-                        wrap.appendChild(btn);
+                        
+                        // Action buttons container
+                        const actions = document.createElement('div');
+                        actions.className = 'list-actions';
+                        
+                        // Share button (only for owned lists)
+                        if (!list.is_shared) {
+                            const shareBtn = document.createElement('button');
+                            shareBtn.className = 'share-list-btn';
+                            shareBtn.textContent = '🔗';
+                            shareBtn.title = 'Share List';
+                            shareBtn.onclick = function(e) {
+                                e.stopPropagation();
+                                showShareModal(list.id);
+                            };
+                            actions.appendChild(shareBtn);
+                        }
+                        
+                        // Delete button (only for owned lists)
+                        if (!list.is_shared) {
+                            const deleteBtn = document.createElement('button');
+                            deleteBtn.className = 'delete-list-btn';
+                            deleteBtn.textContent = '🗑️';
+                            deleteBtn.title = 'Delete List';
+                            deleteBtn.onclick = function(e) {
+                                e.stopPropagation();
+                                guiConfirm('Delete this list and all its content?').then(confirmed => {
+                                    if (confirmed) {
+                                        fetch('api/lists.php', {
+                                            method: 'POST',
+                                            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                                            body: new URLSearchParams({action: 'delete', id: list.id}),
+                                        })
+                                            .then(r => r.json())
+                                            .then(data => {
+                                                if (data.success) {
+                                                    loadLists();
+                                                    guiToast('List deleted!');
+                                                }
+                                            });
+                                    }
+                                });
+                            };
+                            actions.appendChild(deleteBtn);
+                        }
+                        
+                        wrap.appendChild(actions);
                         nav.appendChild(wrap);
                     });
                     // Select first or newly created
                     let sel = selectId ? selectId : data.lists[0].id;
-                    let selTitle = data.lists.find(l => l.id == sel).title;
+                    let selList = data.lists.find(l => l.id == sel);
                     currentListId = sel;
-                    loadItems(sel, selTitle);
+                    currentListType = selList.type || 'todo';
+                    loadItems(sel, selList.title, selList.type || 'todo', selList.is_shared);
                 }
             });
     }
 
-    // Add New List
-    document.getElementById('add-list-form').onsubmit = function(e) {
+    // Share list modal functions
+    function showShareModal(listId) {
+        document.getElementById('share-list-id').value = listId;
+        document.getElementById('share-list-modal').style.display = 'flex';
+        document.getElementById('share-username').focus();
+    }
+
+    document.getElementById('cancel-share-list').onclick = function() {
+        document.getElementById('share-list-modal').style.display = 'none';
+        document.getElementById('share-list-form').reset();
+    };
+
+    document.getElementById('share-list-form').onsubmit = function(e) {
         e.preventDefault();
-        const title = document.getElementById('new-list-title').value.trim();
-        if (!title) return;
+        const listId = document.getElementById('share-list-id').value;
+        const username = document.getElementById('share-username').value.trim();
+        const permission = document.getElementById('share-permission').value;
+        
+        if (!username) return;
+        
         fetch('api/lists.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: new URLSearchParams({action: 'add', title}),
+            body: new URLSearchParams({action: 'share', list_id: listId, username, permission}),
         })
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    document.getElementById('new-list-title').value = '';
-                    loadLists(data.id);
-                    guiToast('List added!');
+                    document.getElementById('share-list-modal').style.display = 'none';
+                    document.getElementById('share-list-form').reset();
+                    guiToast(data.message || 'List shared successfully!');
+                } else {
+                    guiAlert(data.error || 'Failed to share list');
                 }
             });
     };
 
+    // Help modal
+    document.getElementById('help-link').onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('help-modal').style.display = 'flex';
+    };
+
+    document.getElementById('close-help').onclick = function() {
+        document.getElementById('help-modal').style.display = 'none';
+    };
+
     // Load items for a list
-    function loadItems(listId, listTitle) {
+    function loadItems(listId, listTitle, listType = 'todo', isShared = false) {
         fetch('api/items.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -104,23 +198,47 @@ document.addEventListener('DOMContentLoaded', function() {
         })
             .then(r => r.json())
             .then(data => {
-                let html = `<h2 class="list-title">${listTitle}</h2>`;
-                html += `<ul class="task-list">`;
-                if (data.items.length === 0) {
-                    html += `<li style="color:#888;">No tasks yet.</li>`;
+                const typeIcon = listType === 'note' ? '📝' : '📋';
+                const sharedText = isShared ? ' (Shared)' : '';
+                let html = `<h2 class="list-title">${typeIcon} ${listTitle}${sharedText}</h2>`;
+                
+                if (listType === 'todo') {
+                    // Render as todo list
+                    html += `<ul class="task-list">`;
+                    if (data.items.length === 0) {
+                        html += `<li style="color:#888;">No tasks yet.</li>`;
+                    }
+                    data.items.forEach(item => {
+                        html += `<li class="task-item${item.is_done ? ' done' : ''}" data-id="${item.id}">
+                        <input type="checkbox" ${item.is_done ? 'checked' : ''} class="toggle-task">
+                        <span>${escapeHtml(item.content)}</span>
+                        <button class="delete-task" title="Delete">🗑️</button>
+                    </li>`;
+                    });
+                    html += `</ul>
+                <form id="add-item-form" autocomplete="off">
+                    <input type="text" id="new-item-content" placeholder="Add a new task..." maxlength="255" required>
+                    <button type="submit">Add Task</button>
+                </form>`;
+                } else {
+                    // Render as note page
+                    html += `<div class="note-content">`;
+                    if (data.items.length === 0) {
+                        html += `<p style="color:#888;">Click below to start writing...</p>`;
+                    }
+                    data.items.forEach(item => {
+                        html += `<div class="note-item" data-id="${item.id}">
+                        <div class="note-text">${escapeHtml(item.content)}</div>
+                        <button class="delete-note" title="Delete">🗑️</button>
+                    </div>`;
+                    });
+                    html += `</div>
+                <form id="add-item-form" autocomplete="off">
+                    <textarea id="new-item-content" placeholder="Write your note here..." rows="4" required></textarea>
+                    <button type="submit">Add Note</button>
+                </form>`;
                 }
-                data.items.forEach(item => {
-                    html += `<li class="task-item${item.is_done ? ' done' : ''}" data-id="${item.id}">
-                    <input type="checkbox" ${item.is_done ? 'checked' : ''} class="toggle-task">
-                    <span>${escapeHtml(item.content)}</span>
-                    <button class="delete-task" title="Delete">🗑️</button>
-                </li>`;
-                });
-                html += `</ul>
-            <form id="add-item-form" autocomplete="off">
-                <input type="text" id="new-item-content" placeholder="Add a new task..." maxlength="255" required>
-                <button type="submit">Add</button>
-            </form>`;
+                
                 document.getElementById('main-content').innerHTML = html;
 
                 // Add Item
@@ -128,55 +246,81 @@ document.addEventListener('DOMContentLoaded', function() {
                     e.preventDefault();
                     const content = document.getElementById('new-item-content').value.trim();
                     if (!content) return;
+                    
+                    const itemType = listType === 'note' ? 'content' : 'task';
+                    
                     fetch('api/items.php', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                        body: new URLSearchParams({action: 'add', list_id: listId, content}),
+                        body: new URLSearchParams({action: 'add', list_id: listId, content, item_type: itemType}),
                     })
                         .then(r => r.json())
                         .then(data => {
                             if (data.success) {
-                                loadItems(listId, listTitle);
-                                guiToast('Task added!');
+                                loadItems(listId, listTitle, listType, isShared);
+                                guiToast(listType === 'note' ? 'Note added!' : 'Task added!');
                             }
                         });
                 };
 
-                // Toggle and Delete
-                document.querySelectorAll('.task-item').forEach(li => {
-                    // Toggle done
-                    li.querySelector('.toggle-task').onchange = function() {
-                        fetch('api/items.php', {
-                            method: 'POST',
-                            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                            body: new URLSearchParams({
-                                action: 'toggle',
-                                id: li.dataset.id,
-                                is_done: this.checked ? 1 : 0
-                            }),
-                        }).then(() => {
-                            loadItems(listId, listTitle);
-                        });
-                    };
-                    // Delete
-                    li.querySelector('.delete-task').onclick = function() {
-                        guiConfirm('Delete this task?').then(confirmed => {
-                            if (confirmed) {
-                                fetch('api/items.php', {
-                                    method: 'POST',
-                                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                                    body: new URLSearchParams({
-                                        action: 'delete',
-                                        id: li.dataset.id
-                                    }),
-                                }).then(() => {
-                                    loadItems(listId, listTitle);
-                                    guiToast('Task deleted!');
-                                });
-                            }
-                        });
-                    };
-                });
+                // Toggle and Delete for tasks
+                if (listType === 'todo') {
+                    document.querySelectorAll('.task-item').forEach(li => {
+                        // Toggle done
+                        li.querySelector('.toggle-task').onchange = function() {
+                            fetch('api/items.php', {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                                body: new URLSearchParams({
+                                    action: 'toggle',
+                                    id: li.dataset.id,
+                                    is_done: this.checked ? 1 : 0
+                                }),
+                            }).then(() => {
+                                loadItems(listId, listTitle, listType, isShared);
+                            });
+                        };
+                        // Delete
+                        li.querySelector('.delete-task').onclick = function() {
+                            guiConfirm('Delete this task?').then(confirmed => {
+                                if (confirmed) {
+                                    fetch('api/items.php', {
+                                        method: 'POST',
+                                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                                        body: new URLSearchParams({
+                                            action: 'delete',
+                                            id: li.dataset.id
+                                        }),
+                                    }).then(() => {
+                                        loadItems(listId, listTitle, listType, isShared);
+                                        guiToast('Task deleted!');
+                                    });
+                                }
+                            });
+                        };
+                    });
+                } else {
+                    // Delete for notes
+                    document.querySelectorAll('.note-item').forEach(noteDiv => {
+                        noteDiv.querySelector('.delete-note').onclick = function() {
+                            guiConfirm('Delete this note?').then(confirmed => {
+                                if (confirmed) {
+                                    fetch('api/items.php', {
+                                        method: 'POST',
+                                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                                        body: new URLSearchParams({
+                                            action: 'delete',
+                                            id: noteDiv.dataset.id
+                                        }),
+                                    }).then(() => {
+                                        loadItems(listId, listTitle, listType, isShared);
+                                        guiToast('Note deleted!');
+                                    });
+                                }
+                            });
+                        };
+                    });
+                }
             });
     }
 
@@ -191,6 +335,116 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         return text.replace(/[&<>"']/g, function(m) { return map[m]; });
     }
+
+    // Search functionality
+    let searchTimeout;
+    document.getElementById('search-input').oninput = function() {
+        const query = this.value.trim();
+        clearTimeout(searchTimeout);
+        
+        if (query.length < 2) {
+            document.getElementById('search-results').style.display = 'none';
+            return;
+        }
+        
+        searchTimeout = setTimeout(() => {
+            fetch('api/search.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: new URLSearchParams({action: 'search', query}),
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showSearchResults(data.results);
+                    }
+                });
+        }, 300);
+    };
+
+    function showSearchResults(results) {
+        const container = document.getElementById('search-results');
+        
+        if (results.length === 0) {
+            container.innerHTML = '<div class="search-no-results">No results found</div>';
+            container.style.display = 'block';
+            return;
+        }
+        
+        let html = '';
+        results.forEach(result => {
+            const typeIcon = result.list_type === 'note' ? '📝' : '📋';
+            const sourceIcon = result.source === 'shared' ? ' 🤝' : '';
+            
+            html += `<div class="search-result" onclick="loadItems(${result.list_id}, '${escapeHtml(result.list_title)}', '${result.list_type}', ${result.source === 'shared'})">
+                <div class="search-list-title">${typeIcon} ${escapeHtml(result.list_title)}${sourceIcon}</div>`;
+            
+            if (result.items.length > 0) {
+                html += '<div class="search-items">';
+                result.items.slice(0, 3).forEach(item => {
+                    html += `<div class="search-item">• ${escapeHtml(item.content.substring(0, 60))}${item.content.length > 60 ? '...' : ''}</div>`;
+                });
+                if (result.items.length > 3) {
+                    html += `<div class="search-item">... and ${result.items.length - 3} more</div>`;
+                }
+                html += '</div>';
+            }
+            
+            html += '</div>';
+        });
+        
+        container.innerHTML = html;
+        container.style.display = 'block';
+    }
+
+    // Hide search results when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-container')) {
+            document.getElementById('search-results').style.display = 'none';
+        }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + K to focus search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            document.getElementById('search-input').focus();
+        }
+        
+        // Escape to close modals
+        if (e.key === 'Escape') {
+            document.getElementById('add-list-modal').style.display = 'none';
+            document.getElementById('share-list-modal').style.display = 'none';
+            document.getElementById('help-modal').style.display = 'none';
+            document.getElementById('search-results').style.display = 'none';
+        }
+        
+        // Ctrl/Cmd + N to create new list
+        if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+            e.preventDefault();
+            document.getElementById('add-list-btn').click();
+        }
+    });
+
+    // Close modals when clicking backdrop
+    document.getElementById('add-list-modal').onclick = function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    };
+    
+    document.getElementById('share-list-modal').onclick = function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    };
+
+    document.getElementById('help-modal').onclick = function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    };
 
     // Initial load
     loadLists();

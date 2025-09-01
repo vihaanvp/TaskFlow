@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="auth-panel">
         <h2>Login to TaskFlow</h2>
         <?php if($registered): ?>
-            <div class="auth-success">Registration successful! Please log in.</div>
+            <div class="auth-success">Registration successful! You can now log in.</div>
         <?php endif; ?>
         <?php if($error): ?>
             <div class="auth-error"><?=htmlspecialchars($error)?></div>
