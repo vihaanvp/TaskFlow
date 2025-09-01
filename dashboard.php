@@ -27,12 +27,18 @@ $selected_list_id = $lists[0]['id'] ?? null;
             <span class="app-logo">📝</span>
             <span class="app-name">TaskFlow</span>
         </div>
+        
+        <!-- Search bar -->
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search lists and items..." maxlength="100">
+            <div id="search-results" style="display:none;"></div>
+        </div>
+        
         <nav class="lists-nav" id="lists-nav">
             <!-- Lists will be loaded here by JS -->
         </nav>
         <form id="add-list-form" autocomplete="off">
-            <input type="text" id="new-list-title" placeholder="New List..." maxlength="128" required>
-            <button type="submit" title="Add List">+</button>
+            <button type="button" id="add-list-btn" title="Add List">+ New List</button>
         </form>
         <div class="sidebar-options">
             <a href="settings.php" class="sidebar-settings-link">Settings</a>
@@ -56,6 +62,56 @@ $selected_list_id = $lists[0]['id'] ?? null;
         </div>
     </div>
 </div>
+
+<!-- Add List Modal -->
+<div id="add-list-modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Create New List</h3>
+        <form id="new-list-form">
+            <label for="list-title">Title</label>
+            <input type="text" id="list-title" maxlength="128" required>
+            
+            <label for="list-type">Type</label>
+            <select id="list-type" required>
+                <option value="todo">📋 To-Do List</option>
+                <option value="note">📝 Notes Page</option>
+            </select>
+            
+            <label for="list-description">Description (optional)</label>
+            <textarea id="list-description" rows="3" maxlength="500"></textarea>
+            
+            <div class="modal-buttons">
+                <button type="submit">Create List</button>
+                <button type="button" id="cancel-add-list">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Share List Modal -->
+<div id="share-list-modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Share List</h3>
+        <form id="share-list-form">
+            <input type="hidden" id="share-list-id">
+            
+            <label for="share-username">Username</label>
+            <input type="text" id="share-username" required>
+            
+            <label for="share-permission">Permission</label>
+            <select id="share-permission">
+                <option value="read">Read Only</option>
+                <option value="write">Read & Write</option>
+            </select>
+            
+            <div class="modal-buttons">
+                <button type="submit">Share List</button>
+                <button type="button" id="cancel-share-list">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Toast -->
 <div id="gui-toast"></div>
 

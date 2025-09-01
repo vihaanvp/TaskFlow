@@ -4,6 +4,7 @@ require_once 'includes/auth.php';
 
 $error = '';
 $registered = isset($_GET['registered']);
+$verify_email = isset($_GET['verify_email']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
@@ -34,7 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="auth-container">
     <div class="auth-panel">
         <h2>Login to TaskFlow</h2>
-        <?php if($registered): ?>
+        <?php if($registered && $verify_email): ?>
+            <div class="auth-success">Registration successful! Please check your email to verify your account.</div>
+        <?php elseif($registered): ?>
             <div class="auth-success">Registration successful! Please log in.</div>
         <?php endif; ?>
         <?php if($error): ?>

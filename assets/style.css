@@ -494,6 +494,266 @@ body.dark, html {
     opacity: 1;
     bottom: 54px;
 }
+
+/* Modal styles for new features */
+#add-list-modal, #share-list-modal {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    background: rgba(24,24,27,0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #232329;
+    color: #f3f3f5;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 32px #0007;
+    padding: 2em;
+    animation: pop 0.14s cubic-bezier(0.5,1.7,0.7,1.01);
+}
+
+.modal-content h3 {
+    margin: 0 0 1.5em 0;
+    color: var(--accent);
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+}
+
+.modal-content input, .modal-content select, .modal-content textarea {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    padding: 0.8em;
+    color: var(--text);
+    font-size: 1em;
+    margin-bottom: 1em;
+    box-sizing: border-box;
+}
+
+.modal-content textarea {
+    resize: vertical;
+    font-family: inherit;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 1em;
+    justify-content: flex-end;
+    margin-top: 1.5em;
+}
+
+.modal-buttons button {
+    padding: 0.8em 1.5em;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.modal-buttons button[type="submit"] {
+    background: var(--accent);
+    color: #fff;
+}
+
+.modal-buttons button[type="button"] {
+    background: #39394d;
+    color: #b3b3c5;
+}
+
+.modal-buttons button:hover {
+    filter: brightness(1.13);
+}
+
+/* List actions */
+.list-link-wrap {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.list-actions {
+    display: none;
+    gap: 0.3em;
+    margin-left: auto;
+}
+
+.list-link-wrap:hover .list-actions,
+.list-link-wrap.active .list-actions {
+    display: flex;
+}
+
+.share-list-btn, .delete-list-btn {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 0.3em;
+    border-radius: 4px;
+    transition: background 0.15s;
+}
+
+.share-list-btn:hover {
+    background: #39394d;
+    color: var(--accent);
+}
+
+.delete-list-btn:hover {
+    background: #39394d;
+    color: #f87171;
+}
+
+/* Note styles */
+.note-content {
+    margin-bottom: 2em;
+}
+
+.note-item {
+    background: #2a2a35;
+    border-radius: 8px;
+    padding: 1em;
+    margin-bottom: 1em;
+    position: relative;
+    border-left: 3px solid var(--accent);
+}
+
+.note-text {
+    white-space: pre-wrap;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+.delete-note {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 0.3em;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s;
+}
+
+.note-item:hover .delete-note {
+    opacity: 1;
+}
+
+.delete-note:hover {
+    background: #39394d;
+    color: #f87171;
+}
+
+/* Enhanced list styling */
+.list-title {
+    color: var(--text);
+    margin-bottom: 1.5em;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+/* Add list button styling */
+#add-list-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.8em 1.2em;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.15s;
+}
+
+#add-list-btn:hover {
+    filter: brightness(1.13);
+}
+
+/* Search functionality */
+.search-container {
+    margin-bottom: 1.5em;
+    position: relative;
+}
+
+#search-input {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    padding: 0.8em;
+    color: var(--text);
+    font-size: 0.9em;
+    box-sizing: border-box;
+}
+
+#search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+#search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #2a2a35;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+.search-result {
+    padding: 0.8em;
+    cursor: pointer;
+    border-bottom: 1px solid var(--input-border);
+    transition: background 0.15s;
+}
+
+.search-result:hover {
+    background: #34344a;
+}
+
+.search-result:last-child {
+    border-bottom: none;
+}
+
+.search-list-title {
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 0.3em;
+}
+
+.search-items {
+    font-size: 0.85em;
+    color: #b3b3c5;
+}
+
+.search-item {
+    margin-bottom: 0.2em;
+}
+
+.search-no-results {
+    padding: 1em;
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}
 @media (max-width: 600px) {
     .dashboard-layout {
         flex-direction: column;
