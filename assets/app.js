@@ -179,6 +179,16 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     };
 
+    // Help modal
+    document.getElementById('help-link').onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('help-modal').style.display = 'flex';
+    };
+
+    document.getElementById('close-help').onclick = function() {
+        document.getElementById('help-modal').style.display = 'none';
+    };
+
     // Load items for a list
     function loadItems(listId, listTitle, listType = 'todo', isShared = false) {
         fetch('api/items.php', {
@@ -393,6 +403,48 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('search-results').style.display = 'none';
         }
     });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + K to focus search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            document.getElementById('search-input').focus();
+        }
+        
+        // Escape to close modals
+        if (e.key === 'Escape') {
+            document.getElementById('add-list-modal').style.display = 'none';
+            document.getElementById('share-list-modal').style.display = 'none';
+            document.getElementById('help-modal').style.display = 'none';
+            document.getElementById('search-results').style.display = 'none';
+        }
+        
+        // Ctrl/Cmd + N to create new list
+        if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+            e.preventDefault();
+            document.getElementById('add-list-btn').click();
+        }
+    });
+
+    // Close modals when clicking backdrop
+    document.getElementById('add-list-modal').onclick = function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    };
+    
+    document.getElementById('share-list-modal').onclick = function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    };
+
+    document.getElementById('help-modal').onclick = function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    };
 
     // Initial load
     loadLists();

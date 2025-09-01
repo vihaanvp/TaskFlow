@@ -41,6 +41,7 @@ $selected_list_id = $lists[0]['id'] ?? null;
             <button type="button" id="add-list-btn" title="Add List">+ New List</button>
         </form>
         <div class="sidebar-options">
+            <a href="javascript:void(0)" id="help-link" class="sidebar-settings-link">Help & Shortcuts</a>
             <a href="settings.php" class="sidebar-settings-link">Settings</a>
             <a href="logout.php" class="logout-link">Logout</a>
         </div>
@@ -109,6 +110,45 @@ $selected_list_id = $lists[0]['id'] ?? null;
                 <button type="button" id="cancel-share-list">Cancel</button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Help Modal -->
+<div id="help-modal" style="display:none;">
+    <div class="modal-content">
+        <h3>TaskFlow Help & Shortcuts</h3>
+        
+        <div class="help-section">
+            <h4>Keyboard Shortcuts</h4>
+            <div class="shortcut-list">
+                <div class="shortcut-item">
+                    <kbd>Ctrl</kbd> + <kbd>K</kbd> <span>Focus search</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>Ctrl</kbd> + <kbd>N</kbd> <span>Create new list</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>Esc</kbd> <span>Close modals</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="help-section">
+            <h4>List Types</h4>
+            <p><strong>📋 Todo Lists:</strong> Traditional task lists with checkboxes for tracking completion.</p>
+            <p><strong>📝 Note Pages:</strong> Freeform text areas for writing notes, ideas, or documentation.</p>
+        </div>
+        
+        <div class="help-section">
+            <h4>Sharing</h4>
+            <p><strong>Read Only:</strong> Users can view the list but cannot make changes.</p>
+            <p><strong>Read & Write:</strong> Users can view and edit the list content.</p>
+            <p>Shared lists are marked with 🤝 in the sidebar.</p>
+        </div>
+        
+        <div class="modal-buttons">
+            <button type="button" id="close-help">Close</button>
+        </div>
     </div>
 </div>
 

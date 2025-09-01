@@ -754,6 +754,43 @@ body.dark, html {
     color: #888;
     font-style: italic;
 }
+
+/* Help modal specific styles */
+.help-section {
+    margin-bottom: 1.5em;
+}
+
+.help-section h4 {
+    color: var(--accent);
+    margin-bottom: 0.5em;
+    font-size: 1.1em;
+}
+
+.shortcut-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+.shortcut-item kbd {
+    background: #39394d;
+    border: 1px solid #52525b;
+    border-radius: 4px;
+    padding: 0.2em 0.4em;
+    font-size: 0.85em;
+    font-family: monospace;
+    color: #e4e4e7;
+}
+
+.shortcut-item span {
+    color: #b3b3c5;
+}
 @media (max-width: 600px) {
     .dashboard-layout {
         flex-direction: column;

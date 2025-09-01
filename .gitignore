@@ -28,6 +28,34 @@
 .idea/**/gradle.xml
 .idea/**/libraries
 
+# TaskFlow specific ignores
+# Configuration files with sensitive data
+includes/config.php
+
+# Upload directories
+uploads/
+temp/
+
+# Log files
+*.log
+error.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Development files
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
 # Gradle and Maven with auto-import
 # When using Gradle or Maven with auto-import, you should exclude module files,
 # since they will be recreated, and may cause churn.  Uncomment if using

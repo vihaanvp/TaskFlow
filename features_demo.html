@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TaskFlow Features Demo</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2em;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2em;
+            margin-top: 2em;
+        }
+        .feature-card {
+            background: var(--panel);
+            border-radius: 12px;
+            padding: 1.5em;
+            border: 1px solid var(--input-border);
+        }
+        .feature-title {
+            color: var(--accent);
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 1em;
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+        }
+        .feature-description {
+            line-height: 1.6;
+            margin-bottom: 1em;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 0.3em 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+        }
+        .feature-list li::before {
+            content: "✓";
+            color: var(--success);
+            font-weight: bold;
+        }
+        .demo-note {
+            background: #2a2a35;
+            border-radius: 8px;
+            padding: 1em;
+            margin: 1em 0;
+            border-left: 3px solid var(--accent);
+        }
+    </style>
+</head>
+<body class="dark">
+<div class="demo-container">
+    <header style="text-align: center; margin-bottom: 3em;">
+        <h1>📝 TaskFlow - Enhanced Features</h1>
+        <p style="font-size: 1.1em; color: #b3b3c5;">Comprehensive note-taking and task management with collaboration</p>
+    </header>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-title">📧 Email Verification</div>
+            <div class="feature-description">
+                Secure user registration with email verification to ensure account security and enable recovery features.
+            </div>
+            <ul class="feature-list">
+                <li>Email validation during registration</li>
+                <li>Verification token system</li>
+                <li>Development-friendly email logging</li>
+                <li>Password reset preparation</li>
+            </ul>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-title">📋 Dual List Types</div>
+            <div class="feature-description">
+                Choose between traditional task lists and freeform note pages when creating lists.
+            </div>
+            <ul class="feature-list">
+                <li>📋 Todo Lists with checkboxes</li>
+                <li>📝 Note Pages for rich content</li>
+                <li>Visual type indicators</li>
+                <li>Type-specific interfaces</li>
+            </ul>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-title">🤝 List Sharing</div>
+            <div class="feature-description">
+                Collaborate with others by sharing your lists with read-only or read-write permissions.
+            </div>
+            <ul class="feature-list">
+                <li>Share by username</li>
+                <li>Read/Write permission levels</li>
+                <li>Visual shared indicators</li>
+                <li>Access control enforcement</li>
+            </ul>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-title">🔍 Search Functionality</div>
+            <div class="feature-description">
+                Quickly find lists and content across your own and shared lists with real-time search.
+            </div>
+            <ul class="feature-list">
+                <li>Real-time search with debouncing</li>
+                <li>Search list titles and content</li>
+                <li>Include shared lists in results</li>
+                <li>Grouped results with previews</li>
+            </ul>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-title">🎨 Enhanced UI/UX</div>
+            <div class="feature-description">
+                Modern, intuitive interface with improved visual hierarchy and user experience.
+            </div>
+            <ul class="feature-list">
+                <li>Modal dialogs for actions</li>
+                <li>Hover actions and tooltips</li>
+                <li>Responsive design</li>
+                <li>Dark theme optimized</li>
+            </ul>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-title">🗄️ Database Schema</div>
+            <div class="feature-description">
+                Robust database design supporting all new features with proper relationships and indexing.
+            </div>
+            <ul class="feature-list">
+                <li>Email verification tables</li>
+                <li>List sharing relationships</li>
+                <li>Content type support</li>
+                <li>Performance indexes</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="demo-note">
+        <h3>🚀 Getting Started</h3>
+        <p><strong>To use these features:</strong></p>
+        <ol style="margin-left: 1.5em;">
+            <li>Run the database migrations in <code>database_migrations.sql</code></li>
+            <li>Register a new account (now requires email)</li>
+            <li>Create lists with different types (Todo/Note)</li>
+            <li>Share lists with other users</li>
+            <li>Use the search to find content quickly</li>
+        </ol>
+        
+        <p><strong>Note:</strong> Email sending is configured for development mode and will log to error logs instead of sending actual emails. Configure your SMTP settings in production.</p>
+    </div>
+
+    <div style="text-align: center; margin-top: 3em;">
+        <a href="index.php" class="home-btn">← Back to TaskFlow</a>
+    </div>
+</div>
+</body>
+</html>
