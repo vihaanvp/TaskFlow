@@ -14,9 +14,21 @@ try {
         ]
     );
 } catch (PDOException $e) {
+    // Log the error for debugging
+    error_log('Database connection failed: ' . $e->getMessage());
+    
     if (DEBUG) {
-        die('Database connection failed: ' . $e->getMessage());
+        die('<h1 style="color: #f87171; font-family: system-ui;">Database Connection Error</h1>
+             <p style="font-family: system-ui; background: #232329; color: #f3f3f5; padding: 1em; border-radius: 8px;">
+             <strong>Error:</strong> ' . htmlspecialchars($e->getMessage()) . '<br><br>
+             <strong>Solution:</strong> Check your database settings in <code>includes/config.php</code><br>
+             • Ensure MySQL/MariaDB is running<br>
+             • Verify database credentials<br>
+             • Create database if it doesn\'t exist: <code>CREATE DATABASE taskflow;</code><br>
+             • Import schema: <code>mysql -u root -p taskflow < database_migrations.sql</code>
+             </p>');
     } else {
-        die('Database connection failed. Please check your configuration in includes/config.php');
+        die('<h1 style="color: #f87171; font-family: system-ui;">Service Temporarily Unavailable</h1>
+             <p style="font-family: system-ui;">We\'re experiencing technical difficulties. Please try again later.</p>');
     }
 }
