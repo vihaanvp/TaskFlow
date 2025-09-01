@@ -191,10 +191,6 @@ define('DEVELOPMENT_MODE', true); // Set to false in production
 - Ensure MySQL/MariaDB is running
 - Verify database exists and user has permissions
 
-**Email Verification Not Working**
-- In development mode, check PHP error logs for email content
-- Verification URLs are logged instead of emailed
-
 **Permission Denied**
 - Check file permissions for web server access
 - Ensure `includes/config.php` file exists and is readable
@@ -287,17 +283,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
    mysql -u username -p taskflow < taskflow_database.sql
    ```
 
-4. **Configure Email (Optional)**
-   - For production: Configure SMTP settings in `includes/email.php`
-   - For development: Email verification links are logged to error logs
-
-5. **Set up Web Server**
+4. **Set up Web Server**
    - Point document root to the TaskFlow directory
    - Ensure PHP has write permissions for session handling
 
 ### First Steps
 
-1. **Register Account**: Visit the app and create a new account with email verification
+1. **Register Account**: Create a new account - login immediately after registration
 2. **Create Lists**: Choose between Todo Lists and Note Pages
 3. **Share & Collaborate**: Share lists with other users by username
 4. **Search Content**: Use the search bar to quickly find lists and content
@@ -306,7 +298,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📊 Database Schema
 
 ### Core Tables
-- **users**: User accounts with email verification
+- **users**: User accounts with secure authentication
 - **lists**: Lists with type support (todo/note)
 - **items**: List content with type-specific handling
 - **list_shares**: List sharing and collaboration
@@ -316,7 +308,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Key Features
 - **Foreign Key Constraints**: Maintains data integrity
 - **Indexes**: Optimized for search and filtering performance
-- **Email Verification**: Secure token-based verification system
+- **Secure Authentication**: Immediate login after registration
 - **Collaboration**: Granular permission system for sharing
 
 ## 🎨 UI/UX Enhancements
@@ -342,7 +334,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **SQL Injection Protection**: Prepared statements throughout
 - **CSRF Protection**: Form-based security measures
 - **Access Control**: User-specific data isolation
-- **Email Verification**: Prevents fake account creation
+- **Secure Registration**: Simple username/password authentication
 
 ### Performance Optimizations
 - **Database Indexes**: Strategic indexing for common queries
