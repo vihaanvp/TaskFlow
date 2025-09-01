@@ -105,6 +105,7 @@ body.dark, html {
     display: block;
 }
 .auth-panel input[type="text"],
+.auth-panel input[type="email"],
 .auth-panel input[type="password"] {
     width: 100%;
     padding: 0.7em;
@@ -656,13 +657,47 @@ body.dark, html {
     color: #f87171;
 }
 
-/* Enhanced list styling */
-.list-title {
-    color: var(--text);
-    margin-bottom: 1.5em;
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
+/* Enhanced input focus states */
+.auth-panel input[type="text"]:focus,
+.auth-panel input[type="email"]:focus,
+.auth-panel input[type="password"]:focus,
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus,
+#search-input:focus,
+#add-item-form input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+/* Enhanced button states */
+.auth-panel button[type="submit"]:focus,
+.modal-buttons button:focus,
+.gui-modal-btn:focus,
+#add-list-btn:focus,
+#add-item-form button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+}
+
+/* Loading states */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Improved accessibility */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 /* Add list button styling */
@@ -791,6 +826,47 @@ body.dark, html {
 .shortcut-item span {
     color: #b3b3c5;
 }
+/* List type specific styles */
+.list-title.todo-list::before {
+    content: "📋";
+}
+
+.list-title.note-page::before {
+    content: "📝";
+}
+
+/* Shared list indicator */
+.list-title.shared::after {
+    content: "🤝";
+    margin-left: auto;
+    font-size: 0.9em;
+}
+
+/* Enhanced error and success states */
+.auth-error {
+    border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.auth-success {
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+/* Additional responsive improvements */
+@media (max-width: 768px) {
+    .modal-content {
+        margin: 1em;
+        max-width: calc(100vw - 2em);
+    }
+    
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .search-container {
+        margin-bottom: 1em;
+    }
+}
+
 @media (max-width: 600px) {
     .dashboard-layout {
         flex-direction: column;

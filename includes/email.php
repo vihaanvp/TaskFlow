@@ -1,11 +1,20 @@
 <?php
-// Email configuration and utility functions
-// This is a basic implementation. In production, use a service like SendGrid, Mailgun, or AWS SES
+// Load environment configuration
+require_once __DIR__ . '/config.php';
+
+/**
+ * Email configuration and utility functions
+ * Supports both development and production environments
+ */
 
 function sendVerificationEmail($email, $token, $username) {
-    $verification_url = "http://" . $_SERVER['HTTP_HOST'] . "/verify_email.php?token=" . $token;
+    $app_url = env('APP_URL', 'http://localhost');
+    $verification_url = $app_url . "/verify_email.php?token=" . $token;
     
-    $subject = "TaskFlow - Verify Your Email";
+    $subject = env('APP_NAME', 'TaskFlow') . " - Verify Your Email";
+    $from_name = env('MAIL_FROM_NAME', 'TaskFlow');
+    $from_email = env('MAIL_FROM_ADDRESS', 'noreply@taskflow.local');
+    
     $message = "
     <html>
     <head>
@@ -20,10 +29,10 @@ function sendVerificationEmail($email, $token, $username) {
     <body>
         <div class='container'>
             <div class='header'>
-                <h1>📝 TaskFlow</h1>
+                <h1>📝 " . env('APP_NAME', 'TaskFlow') . "</h1>
             </div>
             <div class='content'>
-                <h2>Welcome to TaskFlow, {$username}!</h2>
+                <h2>Welcome to " . env('APP_NAME', 'TaskFlow') . ", {$username}!</h2>
                 <p>Thank you for signing up. Please verify your email address to complete your registration.</p>
                 <p><a href='{$verification_url}' class='button'>Verify Email Address</a></p>
                 <p>Or copy and paste this link: <br>{$verification_url}</p>
@@ -37,28 +46,41 @@ function sendVerificationEmail($email, $token, $username) {
     $headers = array(
         'MIME-Version: 1.0',
         'Content-Type: text/html; charset=UTF-8',
-        'From: TaskFlow <noreply@taskflow.local>',
+        "From: {$from_name} <{$from_email}>",
         'X-Mailer: PHP/' . phpversion()
     );
     
-    // In development, just log the email instead of sending
-    if (defined('DEVELOPMENT_MODE') || true) {
-        error_log("Would send verification email to {$email}:");
-        error_log("Subject: {$subject}");
-        error_log("Verification URL: {$verification_url}");
-        return true; // Simulate success
+    // In development mode, log emails instead of sending
+    if (env('DEVELOPMENT_MODE', true) || env('APP_ENV') === 'development') {
+        $log_message = "=== EMAIL LOG ===\n";
+        $log_message .= "To: {$email}\n";
+        $log_message .= "Subject: {$subject}\n";
+        $log_message .= "Verification URL: {$verification_url}\n";
+        $log_message .= "Time: " . date('Y-m-d H:i:s') . "\n";
+        $log_message .= "==================\n\n";
+        
+        error_log($log_message);
+        return true; // Simulate success in development
     }
     
-    // In production, uncomment this:
-    // return mail($email, $subject, $message, implode("\r\n", $headers));
+    // Production email sending
+    if (env('MAIL_DRIVER') === 'smtp') {
+        // For production, integrate with your preferred email service
+        // Examples: SendGrid, Mailgun, AWS SES, etc.
+        return mail($email, $subject, $message, implode("\r\n", $headers));
+    }
     
-    return true;
+    return mail($email, $subject, $message, implode("\r\n", $headers));
 }
 
 function sendPasswordResetEmail($email, $token, $username) {
-    $reset_url = "http://" . $_SERVER['HTTP_HOST'] . "/reset_password.php?token=" . $token;
+    $app_url = env('APP_URL', 'http://localhost');
+    $reset_url = $app_url . "/reset_password.php?token=" . $token;
     
-    $subject = "TaskFlow - Password Reset";
+    $subject = env('APP_NAME', 'TaskFlow') . " - Password Reset";
+    $from_name = env('MAIL_FROM_NAME', 'TaskFlow');
+    $from_email = env('MAIL_FROM_ADDRESS', 'noreply@taskflow.local');
+    
     $message = "
     <html>
     <head>
@@ -73,12 +95,12 @@ function sendPasswordResetEmail($email, $token, $username) {
     <body>
         <div class='container'>
             <div class='header'>
-                <h1>📝 TaskFlow</h1>
+                <h1>📝 " . env('APP_NAME', 'TaskFlow') . "</h1>
             </div>
             <div class='content'>
                 <h2>Password Reset Request</h2>
                 <p>Hi {$username},</p>
-                <p>You requested a password reset for your TaskFlow account.</p>
+                <p>You requested a password reset for your " . env('APP_NAME', 'TaskFlow') . " account.</p>
                 <p><a href='{$reset_url}' class='button'>Reset Password</a></p>
                 <p>Or copy and paste this link: <br>{$reset_url}</p>
                 <p>This link will expire in 24 hours.</p>
@@ -92,18 +114,23 @@ function sendPasswordResetEmail($email, $token, $username) {
     $headers = array(
         'MIME-Version: 1.0',
         'Content-Type: text/html; charset=UTF-8',
-        'From: TaskFlow <noreply@taskflow.local>',
+        "From: {$from_name} <{$from_email}>",
         'X-Mailer: PHP/' . phpversion()
     );
     
-    // In development, just log the email instead of sending
-    if (defined('DEVELOPMENT_MODE') || true) {
-        error_log("Would send password reset email to {$email}:");
-        error_log("Subject: {$subject}");
-        error_log("Reset URL: {$reset_url}");
-        return true;
+    // In development mode, log emails instead of sending
+    if (env('DEVELOPMENT_MODE', true) || env('APP_ENV') === 'development') {
+        $log_message = "=== EMAIL LOG ===\n";
+        $log_message .= "To: {$email}\n";
+        $log_message .= "Subject: {$subject}\n";
+        $log_message .= "Reset URL: {$reset_url}\n";
+        $log_message .= "Time: " . date('Y-m-d H:i:s') . "\n";
+        $log_message .= "==================\n\n";
+        
+        error_log($log_message);
+        return true; // Simulate success in development
     }
     
-    return true;
+    return mail($email, $subject, $message, implode("\r\n", $headers));
 }
 ?>
