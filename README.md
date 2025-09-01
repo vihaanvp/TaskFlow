@@ -27,12 +27,10 @@ A modern, feature-rich task management and note-taking application with collabor
    - Create a new database called `taskflow`
    - Import the `database_migrations.sql` file
 
-4. **Configure Environment:**
-   ```bash
-   # Copy the configuration template
-   cp .env.example .env
-   ```
-   Edit `.env` with your database details (usually just change DB_PASS if you set a MySQL password)
+4. **Configure Application:**
+   - Open `includes/config.php` in a text editor
+   - Update database credentials if needed (usually just change DB_PASS if you set a MySQL password)
+   - Adjust other settings like APP_URL for your setup
 
 5. **Start Using:**
    - Place TaskFlow folder in your web server directory (like `htdocs` for XAMPP)
@@ -149,7 +147,6 @@ See [DEVELOPMENT.md](DEVELOPMENT.md) for detailed setup instructions, project st
 
 ```
 TaskFlow/
-├── .env.example          # Environment configuration template
 ├── DEVELOPMENT.md        # Developer setup guide
 ├── README.md            # This file
 ├── database_migrations.sql  # Database schema
@@ -157,23 +154,30 @@ TaskFlow/
 ├── dashboard.php       # Main application
 ├── api/                # API endpoints
 ├── assets/             # CSS and JavaScript
-└── includes/           # PHP utilities
+└── includes/           # PHP utilities and configuration
+    ├── config.php      # Application configuration
+    ├── db.php          # Database connection
+    └── auth.php        # Authentication utilities
 ```
 
 ## 🔧 Configuration
 
-All configuration is handled through environment variables in the `.env` file. Copy `.env.example` to `.env` and customize:
+All configuration is handled in `includes/config.php`. Open this file to customize:
 
-```env
-# Database (Required)
-DB_HOST=localhost
-DB_NAME=taskflow
-DB_USER=root
-DB_PASS=your_password
+```php
+// Database Configuration
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'taskflow');
+define('DB_USER', 'root');
+define('DB_PASS', ''); // Set your MySQL password if needed
 
-# Application
-APP_URL=http://localhost:8000
-DEVELOPMENT_MODE=true
+// Application Configuration
+define('APP_NAME', 'TaskFlow');
+define('APP_URL', 'http://localhost');
+define('DEBUG', false); // Set to true for development debugging
+
+// Email Configuration (for notifications)
+define('DEVELOPMENT_MODE', true); // Set to false in production
 ```
 
 ## 🐛 Troubleshooting
@@ -181,7 +185,7 @@ DEVELOPMENT_MODE=true
 ### Common Issues
 
 **Database Connection Error**
-- Check your `.env` database credentials
+- Check your database credentials in `includes/config.php`
 - Ensure MySQL/MariaDB is running
 - Verify database exists and user has permissions
 
@@ -191,7 +195,7 @@ DEVELOPMENT_MODE=true
 
 **Permission Denied**
 - Check file permissions for web server access
-- Ensure `.env` file exists and is readable
+- Ensure `includes/config.php` file exists and is readable
 
 ### Getting Help
 

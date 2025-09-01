@@ -33,242 +33,219 @@ git clone https://github.com/vihaanvp/TaskFlow.git
 cd TaskFlow
 ```
 
-### 2. Environment Configuration
-Copy the environment template and configure your settings:
+### 2. Configuration Setup
+Configure your application settings by editing `includes/config.php`:
 
 ```bash
-cp .env.example .env
-```
-
-Edit `.env` file with your configuration:
-```bash
-nano .env  # or use your preferred editor
+nano includes/config.php  # or use your preferred editor
 ```
 
 **Key settings to configure:**
-```env
-# Database Configuration
-DB_HOST=localhost
-DB_NAME=taskflow
-DB_USER=your_db_user
-DB_PASS=your_db_password
+```php
+// Database Configuration
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'taskflow');
+define('DB_USER', 'root');
+define('DB_PASS', ''); // Set your MySQL password if needed
 
-# Application Configuration
-APP_URL=http://localhost:8000  # Adjust for your setup
+// Application Configuration
+define('APP_NAME', 'TaskFlow');
+define('APP_URL', 'http://localhost:8000'); // Update to your local URL
+define('DEBUG', true); // Enable debug mode for development
 
-# Email Configuration (for development)
-MAIL_FROM_ADDRESS=noreply@taskflow.local
-DEVELOPMENT_MODE=true
+// Email Configuration
+define('DEVELOPMENT_MODE', true); // Logs emails instead of sending
 ```
 
 ### 3. Database Setup
 
-#### Create Database
+#### Option A: Using Command Line
 ```bash
-# Connect to MySQL
-mysql -u your_username -p
-
 # Create database
-CREATE DATABASE taskflow CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-exit
+mysql -u root -p -e "CREATE DATABASE taskflow CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+# Import schema
+mysql -u root -p taskflow < database_migrations.sql
 ```
 
-#### Run Migrations
-```bash
-# Import the database schema
-mysql -u your_username -p taskflow < database_migrations.sql
-```
+#### Option B: Using phpMyAdmin
+1. Open http://localhost/phpmyadmin
+2. Create a new database named `taskflow`
+3. Import the `database_migrations.sql` file
 
-### 4. Web Server Setup
+### 4. Start Development Server
 
-#### Option A: PHP Built-in Server (Development)
+#### Option A: PHP Built-in Server (Recommended for development)
 ```bash
-# Start the development server
 php -S localhost:8000
-
-# Access the application
-# Open http://localhost:8000 in your browser
 ```
 
-#### Option B: Apache/Nginx
-Configure your web server to serve files from the TaskFlow directory.
-
-**Apache Virtual Host Example:**
-```apache
-<VirtualHost *:80>
-    ServerName taskflow.local
-    DocumentRoot /path/to/TaskFlow
-    <Directory /path/to/TaskFlow>
-        AllowOverride All
-        Require all granted
-    </Directory>
-</VirtualHost>
-```
-
-Add to `/etc/hosts`:
-```
-127.0.0.1 taskflow.local
-```
-
-## 🧪 Testing the Installation
-
-### 1. Access the Application
-Open your browser and navigate to your configured URL (e.g., `http://localhost:8000`)
-
-### 2. Create Test Account
-1. Click "Register" on the homepage
-2. Fill in the registration form
-3. Check your PHP error log for the verification email (in development mode)
-4. Copy the verification URL from the log and open it in your browser
-
-### 3. Test Features
-- Create different types of lists (Todo and Notes)
-- Add items to your lists
-- Test the search functionality
-- Try sharing a list (create another user account first)
+#### Option B: XAMPP/WAMP/MAMP
+1. Copy the TaskFlow folder to your web server directory (`htdocs`, `www`, etc.)
+2. Open http://localhost/TaskFlow in your browser
 
 ## 📁 Project Structure
 
 ```
 TaskFlow/
-├── .env.example          # Environment configuration template
-├── .env                  # Your local environment configuration
-├── .gitignore           # Git ignore rules
-├── README.md            # Main documentation
-├── DEVELOPMENT.md       # This development guide
-├── LICENSE              # License information
-├── database_migrations.sql  # Database schema
-├── features_demo.html   # Feature demonstration page
-├── index.php           # Homepage
-├── login.php           # User login
-├── register.php        # User registration
-├── dashboard.php       # Main application dashboard
-├── settings.php        # User settings
-├── verify_email.php    # Email verification handler
-├── logout.php          # Logout handler
-├── api/                # API endpoints
-│   ├── delete_account.php
-│   ├── items.php       # Item management
-│   ├── lists.php       # List management
-│   ├── search.php      # Search functionality
-│   └── tags.php        # Tag management (future)
-├── assets/             # Static assets
-│   ├── app.js          # JavaScript functionality
-│   └── style.css       # Application styles
-└── includes/           # PHP includes
-    ├── auth.php        # Authentication helpers
-    ├── config.php      # Environment configuration loader
-    ├── db.php          # Database connection
-    └── email.php       # Email utilities
+├── api/                     # REST API endpoints
+│   ├── items.php           # Task/note management
+│   ├── lists.php           # List management
+│   └── search.php          # Search functionality
+├── assets/                  # Frontend assets
+│   ├── app.js              # Main JavaScript application
+│   └── style.css           # Complete CSS styling
+├── includes/                # PHP backend utilities
+│   ├── auth.php            # Authentication and session management
+│   ├── config.php          # Application configuration
+│   ├── db.php              # Database connection
+│   └── email.php           # Email utilities (verification, etc.)
+├── dashboard.php            # Main application interface
+├── database_migrations.sql # Database schema and initial data
+├── index.php               # Homepage and landing page
+├── login.php               # User authentication
+├── logout.php              # Session termination
+├── register.php            # User registration with email verification
+├── settings.php            # User account settings
+└── verify_email.php        # Email verification handler
 ```
 
-## 🔧 Configuration Details
+## 🧪 Development Workflow
 
-### Environment Variables
+### Testing Changes
+1. **Frontend Changes**: Refresh browser to see CSS/JS updates
+2. **Backend Changes**: May require server restart for config changes
+3. **Database Changes**: Run SQL scripts manually or use migrations
 
-| Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
-| `DB_HOST` | Database host | `localhost` | Yes |
-| `DB_NAME` | Database name | `taskflow` | Yes |
-| `DB_USER` | Database user | `root` | Yes |
-| `DB_PASS` | Database password | _(empty)_ | No |
-| `APP_NAME` | Application name | `TaskFlow` | No |
-| `APP_URL` | Base application URL | `http://localhost` | No |
-| `APP_ENV` | Environment (development/production) | `development` | No |
-| `DEVELOPMENT_MODE` | Enable development features | `true` | No |
-| `DEBUG` | Enable debug mode | `true` | No |
-| `MAIL_FROM_ADDRESS` | Default sender email | `noreply@taskflow.local` | No |
-| `MAIL_FROM_NAME` | Default sender name | `TaskFlow` | No |
+### Debugging
+- Enable debug mode in `includes/config.php`: `define('DEBUG', true);`
+- Check PHP error logs: `tail -f /var/log/apache2/error.log`
+- Use browser developer tools for frontend debugging
 
-### Email Configuration
-
-In **development mode**, emails are logged to PHP error log instead of being sent. 
-
-For **production**, configure:
-```env
-DEVELOPMENT_MODE=false
-MAIL_DRIVER=smtp
-MAIL_HOST=your.smtp.host
-MAIL_PORT=587
-MAIL_USERNAME=your_smtp_user
-MAIL_PASSWORD=your_smtp_password
-```
+### Best Practices
+- Test with multiple browsers (Chrome, Firefox, Safari)
+- Test responsive design on different screen sizes
+- Validate all user inputs
+- Test email functionality in development mode (check logs)
 
 ## 🐛 Troubleshooting
 
-### Common Issues
+### Common Development Issues
 
-#### Database Connection Failed
-```
-Error: Database connection failed
-```
-**Solution:** Check your database credentials in `.env` and ensure MySQL/MariaDB is running.
+**Database Connection Failed**
+- **Solution:** Check your database credentials in `includes/config.php` and ensure MySQL/MariaDB is running.
 
-#### Permission Denied
-```
-Error: Permission denied
-```
-**Solution:** Ensure your web server has read permissions to the TaskFlow directory.
+**500 Internal Server Error**
+- **Cause:** Usually PHP syntax errors or missing files
+- **Solution:** Check PHP error logs and enable debug mode
 
-#### Email Not Working
-In development mode, emails are logged. Check your PHP error log:
-```bash
-tail -f /var/log/php_errors.log
-# or
-tail -f /usr/local/var/log/php_error_log
-```
+**Styles Not Loading**
+- **Cause:** Incorrect file paths or server configuration
+- **Solution:** Verify web server is serving static files and check browser console
 
-#### 404 Errors
-Ensure your web server is configured correctly and serving files from the TaskFlow directory.
+**Email Verification Not Working**
+- **Solution:** In development mode, emails are logged instead of sent. Check PHP error logs for verification URLs.
 
-### Debug Mode
-
-Enable debug mode in `.env`:
-```env
-DEBUG=true
+Enable debug mode in `includes/config.php`:
+```php
+define('DEBUG', true);
 ```
 
-This provides more detailed error messages.
+## 🔧 Development Tools
 
-## 🔄 Development Workflow
+### Recommended Tools
+- **IDE:** VS Code, PhpStorm, or Sublime Text
+- **Database:** phpMyAdmin, MySQL Workbench, or DBeaver
+- **Browser Extensions:** React Developer Tools, Vue.js devtools
+- **Version Control:** Git with GitHub Desktop or command line
 
-### Making Changes
+### Code Quality
+- Follow PSR-12 coding standards for PHP
+- Use meaningful variable and function names
+- Comment complex logic
+- Test thoroughly before committing
 
-1. **Frontend Changes**: Edit files in `assets/` (CSS/JS)
-2. **Backend Changes**: Edit PHP files and API endpoints
-3. **Database Changes**: Update `database_migrations.sql`
+## 📊 Performance Optimization
 
-### Testing
+### Development Tips
+- Use browser caching for static assets
+- Optimize database queries with proper indexing
+- Minimize HTTP requests
+- Use compression for production deployment
 
-Always test your changes with:
-- Different list types (Todo vs Notes)
-- User registration and email verification
-- List sharing functionality
-- Search across different content types
+### Database Optimization
+- Index frequently queried columns
+- Use prepared statements (already implemented)
+- Optimize JOIN queries
+- Regular database maintenance
 
-### Version Control
+## 🚀 Deployment
 
-Follow standard Git practices:
-```bash
-git add .
-git commit -m "Description of changes"
-git push origin your-branch
+### Preparation for Production
+1. Set `define('DEBUG', false);` in `includes/config.php`
+2. Set `define('DEVELOPMENT_MODE', false);` for real email sending
+3. Configure proper email service (SMTP) in `includes/email.php`
+4. Set secure database credentials
+5. Enable HTTPS in production
+6. Configure proper file permissions
+
+### Production Environment Variables
+```php
+// Production Configuration Example
+define('DEBUG', false);
+define('DEVELOPMENT_MODE', false);
+define('APP_URL', 'https://your-domain.com');
+define('DB_HOST', 'your-db-host');
+define('DB_PASS', 'secure-password');
 ```
 
-## 📚 Additional Resources
+## 🤝 Contributing
 
-- [PHP Documentation](https://www.php.net/docs.php)
-- [MySQL Documentation](https://dev.mysql.com/doc/)
-- [TaskFlow Features Demo](features_demo.html)
+### Development Process
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature-name`
+3. Make your changes
+4. Test thoroughly
+5. Commit with clear messages: `git commit -m "Add feature X"`
+6. Push to your fork: `git push origin feature-name`
+7. Submit a pull request
 
-## 🆘 Getting Help
+### Code Standards
+- Follow PHP PSR-12 coding standards
+- Write clear, descriptive commit messages
+- Include tests for new features
+- Update documentation as needed
 
-If you encounter issues:
+### Feature Development
+- Test all new features thoroughly
+- Ensure responsive design works
+- Validate all user inputs
+- Follow security best practices
 
-1. Check this development guide
-2. Review the error logs
-3. Ensure your environment configuration is correct
-4. Create an issue on the GitHub repository with:
-   - Error messages
-   - Your environment details
-   - Steps to reproduce the issue
+## 📝 API Documentation
+
+### Authentication
+All API endpoints require authentication via PHP sessions.
+
+### Endpoints
+- `POST /api/lists.php` - List management (create, read, update, delete)
+- `POST /api/items.php` - Item management (tasks and notes)
+- `POST /api/search.php` - Search across lists and items
+
+### Response Format
+```json
+{
+    "success": true,
+    "data": {},
+    "message": "Operation completed successfully"
+}
+```
+
+## 🎯 Getting Help
+
+1. **Documentation**: Check this file and README.md first
+2. **Issues**: Search existing GitHub issues
+3. **Community**: Open a new issue with detailed information
+4. **Debug**: Enable debug mode and check error logs
+
+Happy coding! 🚀

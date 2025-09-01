@@ -1,5 +1,5 @@
 <?php
-// Load environment configuration
+// Load configuration
 require_once __DIR__ . '/config.php';
 
 /**
@@ -8,12 +8,11 @@ require_once __DIR__ . '/config.php';
  */
 
 function sendVerificationEmail($email, $token, $username) {
-    $app_url = env('APP_URL', 'http://localhost');
-    $verification_url = $app_url . "/verify_email.php?token=" . $token;
+    $verification_url = APP_URL . "/verify_email.php?token=" . $token;
     
-    $subject = env('APP_NAME', 'TaskFlow') . " - Verify Your Email";
-    $from_name = env('MAIL_FROM_NAME', 'TaskFlow');
-    $from_email = env('MAIL_FROM_ADDRESS', 'noreply@taskflow.local');
+    $subject = APP_NAME . " - Verify Your Email";
+    $from_name = MAIL_FROM_NAME;
+    $from_email = MAIL_FROM_ADDRESS;
     
     $message = "
     <html>
@@ -29,10 +28,10 @@ function sendVerificationEmail($email, $token, $username) {
     <body>
         <div class='container'>
             <div class='header'>
-                <h1>📝 " . env('APP_NAME', 'TaskFlow') . "</h1>
+                <h1>📝 " . APP_NAME . "</h1>
             </div>
             <div class='content'>
-                <h2>Welcome to " . env('APP_NAME', 'TaskFlow') . ", {$username}!</h2>
+                <h2>Welcome to " . APP_NAME . ", {$username}!</h2>
                 <p>Thank you for signing up. Please verify your email address to complete your registration.</p>
                 <p><a href='{$verification_url}' class='button'>Verify Email Address</a></p>
                 <p>Or copy and paste this link: <br>{$verification_url}</p>
@@ -51,7 +50,7 @@ function sendVerificationEmail($email, $token, $username) {
     );
     
     // In development mode, log emails instead of sending
-    if (env('DEVELOPMENT_MODE', true) || env('APP_ENV') === 'development') {
+    if (DEVELOPMENT_MODE) {
         $log_message = "=== EMAIL LOG ===\n";
         $log_message .= "To: {$email}\n";
         $log_message .= "Subject: {$subject}\n";
@@ -64,22 +63,15 @@ function sendVerificationEmail($email, $token, $username) {
     }
     
     // Production email sending
-    if (env('MAIL_DRIVER') === 'smtp') {
-        // For production, integrate with your preferred email service
-        // Examples: SendGrid, Mailgun, AWS SES, etc.
-        return mail($email, $subject, $message, implode("\r\n", $headers));
-    }
-    
     return mail($email, $subject, $message, implode("\r\n", $headers));
 }
 
 function sendPasswordResetEmail($email, $token, $username) {
-    $app_url = env('APP_URL', 'http://localhost');
-    $reset_url = $app_url . "/reset_password.php?token=" . $token;
+    $reset_url = APP_URL . "/reset_password.php?token=" . $token;
     
-    $subject = env('APP_NAME', 'TaskFlow') . " - Password Reset";
-    $from_name = env('MAIL_FROM_NAME', 'TaskFlow');
-    $from_email = env('MAIL_FROM_ADDRESS', 'noreply@taskflow.local');
+    $subject = APP_NAME . " - Password Reset";
+    $from_name = MAIL_FROM_NAME;
+    $from_email = MAIL_FROM_ADDRESS;
     
     $message = "
     <html>
@@ -95,12 +87,12 @@ function sendPasswordResetEmail($email, $token, $username) {
     <body>
         <div class='container'>
             <div class='header'>
-                <h1>📝 " . env('APP_NAME', 'TaskFlow') . "</h1>
+                <h1>📝 " . APP_NAME . "</h1>
             </div>
             <div class='content'>
                 <h2>Password Reset Request</h2>
                 <p>Hi {$username},</p>
-                <p>You requested a password reset for your " . env('APP_NAME', 'TaskFlow') . " account.</p>
+                <p>You requested a password reset for your " . APP_NAME . " account.</p>
                 <p><a href='{$reset_url}' class='button'>Reset Password</a></p>
                 <p>Or copy and paste this link: <br>{$reset_url}</p>
                 <p>This link will expire in 24 hours.</p>
@@ -119,7 +111,7 @@ function sendPasswordResetEmail($email, $token, $username) {
     );
     
     // In development mode, log emails instead of sending
-    if (env('DEVELOPMENT_MODE', true) || env('APP_ENV') === 'development') {
+    if (DEVELOPMENT_MODE) {
         $log_message = "=== EMAIL LOG ===\n";
         $log_message .= "To: {$email}\n";
         $log_message .= "Subject: {$subject}\n";

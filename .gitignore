@@ -29,14 +29,6 @@
 .idea/**/libraries
 
 # TaskFlow specific ignores
-# Environment files with sensitive data
-.env
-.env.local
-.env.production
-
-# Configuration files with sensitive data
-includes/config.php
-
 # Upload directories
 uploads/
 temp/

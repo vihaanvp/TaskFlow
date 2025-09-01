@@ -1,12 +1,6 @@
 <?php
-// Load environment configuration
+// Load configuration
 require_once __DIR__ . '/config.php';
-
-// Database configuration from environment variables
-define('DB_HOST', env('DB_HOST', 'localhost'));
-define('DB_NAME', env('DB_NAME', 'taskflow'));
-define('DB_USER', env('DB_USER', 'root'));
-define('DB_PASS', env('DB_PASS', ''));
 
 try {
     $pdo = new PDO(
@@ -20,9 +14,9 @@ try {
         ]
     );
 } catch (PDOException $e) {
-    if (env('DEBUG', false)) {
+    if (DEBUG) {
         die('Database connection failed: ' . $e->getMessage());
     } else {
-        die('Database connection failed. Please check your configuration.');
+        die('Database connection failed. Please check your configuration in includes/config.php');
     }
 }
