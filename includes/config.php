@@ -19,11 +19,11 @@ define('DEBUG', true); // Set to false for production - IMPORTANT!
 define('SESSION_TIMEOUT', 7200); // 2 hours in seconds
 define('CSRF_TOKEN_LIFETIME', 3600); // 1 hour
 
-// Email Configuration
-define('MAIL_FROM_NAME', 'TaskFlow');
-define('MAIL_FROM_ADDRESS', 'noreply@taskflow.local'); // Update for production
-define('DEVELOPMENT_MODE', true); // Set to false in production
-define('MAIL_DRIVER', 'mail'); // mail, smtp - configure SMTP for production
+// Email Configuration (Disabled - Email verification removed)
+// define('MAIL_FROM_NAME', 'TaskFlow');
+// define('MAIL_FROM_ADDRESS', 'noreply@taskflow.local');
+// define('DEVELOPMENT_MODE', true);
+// define('MAIL_DRIVER', 'mail');
 
 // Performance Configuration
 define('ENABLE_CACHING', false); // Set to true for production with proper cache setup
@@ -31,8 +31,9 @@ define('CACHE_LIFETIME', 3600); // 1 hour
 
 // Feature Flags
 define('ENABLE_REGISTRATION', true); // Set to false to disable new registrations
-define('ENABLE_EMAIL_VERIFICATION', true); // Email verification requirement
-define('ENABLE_PASSWORD_RESET', true); // Password reset functionality
+// Email verification removed - users can login immediately after registration
+// define('ENABLE_EMAIL_VERIFICATION', false);
+// define('ENABLE_PASSWORD_RESET', false);
 
 /**
  * Get configuration value

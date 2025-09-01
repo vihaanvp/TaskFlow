@@ -1,4 +1,4 @@
-# 📝 TaskFlow - Enhanced
+# 📝 TaskFlow
 
 A modern, feature-rich task management and note-taking application with collaboration capabilities. Perfect for individuals and teams who need both structured todo lists and freeform notes.
 
@@ -25,16 +25,18 @@ A modern, feature-rich task management and note-taking application with collabor
    - Open XAMPP and start Apache and MySQL
    - Go to http://localhost/phpmyadmin
    - Create a new database called `taskflow`
-   - Import the `database_migrations.sql` file
+   - Import the `taskflow_database.sql` file (📁 Complete setup with demo data)
+   - **Detailed instructions:** See [DATABASE_SETUP.md](DATABASE_SETUP.md)
 
 4. **Configure Application:**
    - Open `includes/config.php` in a text editor
    - Update database credentials if needed (usually just change DB_PASS if you set a MySQL password)
-   - Adjust other settings like APP_URL for your setup
+   - For production: set DEBUG to false and update APP_URL
 
 5. **Start Using:**
    - Place TaskFlow folder in your web server directory (like `htdocs` for XAMPP)
    - Open http://localhost/TaskFlow in your browser
+   - **Test database:** Visit http://localhost/TaskFlow/test_database.php
    - Create an account and start organizing!
 
 ### For Developers
@@ -43,11 +45,11 @@ See [DEVELOPMENT.md](DEVELOPMENT.md) for detailed setup instructions, project st
 
 ## ✨ Features Overview
 
-### 📧 Email Verification System
-- **Secure Registration**: Email verification required for new accounts
-- **Token-based Security**: Secure verification tokens with expiration
-- **Development Mode**: Email logging for local development
-- **Password Reset Ready**: Infrastructure prepared for password reset functionality
+### 🚀 Production Ready
+- **Simple Setup**: No complex configuration - just import and go
+- **Secure Authentication**: Password hashing with PHP's built-in functions  
+- **No Email Dependencies**: Immediate registration without email verification
+- **Database Optimized**: Proper indexing and foreign key constraints
 
 ### 📋 Dual List Types
 **Choose the right tool for each task:**
@@ -97,8 +99,8 @@ See [DEVELOPMENT.md](DEVELOPMENT.md) for detailed setup instructions, project st
 ## 📱 How to Use TaskFlow
 
 ### Getting Started
-1. **Register an Account**: Create your account with email verification
-2. **Create Your First List**: Choose between Todo or Notes type
+1. **Register an Account**: Create your account - login immediately after registration
+2. **Create Your First List**: Choose between Todo or Notes type  
 3. **Add Content**: Start adding tasks or writing notes
 4. **Stay Organized**: Use search to find content quickly
 
@@ -149,7 +151,7 @@ See [DEVELOPMENT.md](DEVELOPMENT.md) for detailed setup instructions, project st
 TaskFlow/
 ├── DEVELOPMENT.md        # Developer setup guide
 ├── README.md            # This file
-├── database_migrations.sql  # Database schema
+├── taskflow_database.sql     # Complete database setup
 ├── index.php           # Homepage
 ├── dashboard.php       # Main application
 ├── api/                # API endpoints
@@ -281,8 +283,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 3. **Run Database Migrations**
    ```sql
-   -- Execute the SQL in database_migrations.sql
-   mysql -u username -p taskflow < database_migrations.sql
+   -- Execute the SQL in taskflow_database.sql
+   mysql -u username -p taskflow < taskflow_database.sql
    ```
 
 4. **Configure Email (Optional)**

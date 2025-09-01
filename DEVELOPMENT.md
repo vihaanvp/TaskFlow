@@ -65,13 +65,13 @@ define('DEVELOPMENT_MODE', true); // Logs emails instead of sending
 mysql -u root -p -e "CREATE DATABASE taskflow CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
 # Import schema
-mysql -u root -p taskflow < database_migrations.sql
+mysql -u root -p taskflow < taskflow_database.sql
 ```
 
 #### Option B: Using phpMyAdmin
 1. Open http://localhost/phpmyadmin
 2. Create a new database named `taskflow`
-3. Import the `database_migrations.sql` file
+3. Import the `taskflow_database.sql` file
 
 ### 4. Start Development Server
 
@@ -101,7 +101,7 @@ TaskFlow/
 │   ├── db.php              # Database connection
 │   └── email.php           # Email utilities (verification, etc.)
 ├── dashboard.php            # Main application interface
-├── database_migrations.sql # Database schema and initial data
+├── taskflow_database.sql     # Complete database schema and setup
 ├── index.php               # Homepage and landing page
 ├── login.php               # User authentication
 ├── logout.php              # Session termination
